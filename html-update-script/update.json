@@ -1,0 +1,12 @@
+{
+  "info_to_update": "login",
+  "update_prolific": {
+    "is_link": false,
+    "data": "..."
+  },
+  "g_form_update": {
+    "link": "https://docs.google.com/forms/d/e/1FAIpQLSdJhKQZcfmf1BHHiUJUf2lc8T78QLPAiBMQwK8yQh_PhgJkBw/viewform?embedded=true"
+  },
+  "login_text":"<p id=\"login\" align=\"left\" style=\"width:80%;margin:auto;\">Thank you for taking part in this project. Please begin by completing the Google Form below right. After this, you will be sent a username and password to the email address that you provide. <br />After completing the experiment, you will be provided with a completion code to enter into Prolific.<br /> <br />Please contact <a href=\"mailto:clap-admin@uclouvain.be\" target=\"_self\">CLAP Admin</a> for help.</p>"
+
+}
