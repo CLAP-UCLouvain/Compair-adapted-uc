@@ -1,0 +1,146 @@
+<div class="login-screen">
+ <div ng-show="!showCreateUserForm">
+  <h1 class="text-center">
+   Welcome to the Crowdsourcing Language Assessment Project!
+  </h1>
+  <p align="left" id="login" style="width:80%;margin:auto;">
+   Thank you for taking part in this project. Please begin by completing the Google Form below right. After this, you will be sent a username and password to the email address that you provide.
+   <br/>
+   After completing the experiment, you will be provided with a completion code to enter into Prolific.
+   <br/>
+   <br/>
+   Please contact
+   <a href="mailto:clap-admin@uclouvain.be" target="_self">
+    CLAP Admin
+   </a>
+   for help.
+  </p>
+  <div class="row">
+   <form class="form" name="loginForm" ng-class="{'col-sm-6': LoginConfigurableHTML.addition_instructions}" ng-submit="submit()" novalidate="">
+    <fieldset>
+     <div ng-if="AuthTypesEnabled.cas || AuthTypesEnabled.saml" style="display: none;">
+      <h2>
+       Log in with your CWL here:
+      </h2>
+      <a href="/api/saml/login" id="cwl_login" ng-bind-html="LoginConfigurableHTML.saml" ng-if="AuthTypesEnabled.saml">
+       <img alt="CWL Login" border="0" class="center-block" height="25" src="https://www.auth.cwl.ubc.ca/CWL_login_button.gif" width="76"/>
+      </a>
+      <a href="/api/cas/login" id="cwl_login" ng-bind-html="LoginConfigurableHTML.cas" ng-if="AuthTypesEnabled.cas &amp;&amp; !AuthTypesEnabled.saml">
+       <img alt="CWL Login" border="0" class="center-block" height="25" src="https://www.auth.cwl.ubc.ca/CWL_login_button.gif" width="76"/>
+      </a>
+     </div>
+     <hr ng-if="AuthTypesEnabled.app &amp;&amp; (AuthTypesEnabled.cas || AuthTypesEnabled.saml)" style="display: none;"/>
+     <div style="text-align: center;">
+      <compair-logo type="'large'">
+      </compair-logo>
+     </div>
+     <div ng-show="AuthTypesEnabled.app">
+      <h2 ng-if="AuthTypesEnabled.cas || AuthTypesEnabled.saml">
+       Log in here with your CLAP account:
+      </h2>
+      <h2 ng-if="!AuthTypesEnabled.cas &amp;&amp; !AuthTypesEnabled.saml &amp;&amp; !AuthTypesEnabled.demo">
+       Log in with your ComPAIR account:
+      </h2>
+      <h2 ng-if="!AuthTypesEnabled.cas &amp;&amp; !AuthTypesEnabled.saml &amp;&amp; AuthTypesEnabled.demo">
+       Select the account type you want to demo:
+      </h2>
+      <p class="text-center" ng-if="AuthTypesEnabled.demo">
+       <a href="" ng-click="createDemoAccount(SystemRole.sys_admin)">
+        Admin
+       </a>
+       |
+       <a href="" ng-click="createDemoAccount(SystemRole.instructor)">
+        Instructor
+       </a>
+       |
+       <a href="" ng-click="createDemoAccount(SystemRole.student)">
+        Student
+       </a>
+      </p>
+      <hr ng-if="AuthTypesEnabled.demo"/>
+      <p>
+       <a href="" ng-click="showAppLogin = !showAppLogin">
+        <i class="fa fa-chevron-down" ng-show="showAppLogin">
+        </i>
+        <i class="fa fa-chevron-right" ng-hide="showAppLogin">
+        </i>
+        <span id="app-login-toggle" ng-if="!AuthTypesEnabled.demo">
+         Click here to log in to CLAP:
+        </span>
+        <span id="app-login-toggle" ng-if="AuthTypesEnabled.demo">
+         Or log in with existing demo account
+        </span>
+       </a>
+       <span ng-show="allowCreateUser">
+        |
+        <a href="" ng-click="showCreateUserForm = true">
+         Create new account
+        </a>
+       </span>
+      </p>
+      <div ng-show="showAppLogin">
+       <div class="form-group has-feedback" ng-class="{'has-error': loginForm.username.$invalid, 'has-success': loginForm.username.$valid}">
+        <label class="required-star" for="inputUser">
+         CLAP Username
+        </label>
+        <input class="form-control" id="inputUser" name="username" ng-model="username" placeholder="" required="" type="text"/>
+       </div>
+       <div class="form-group has-feedback" ng-class="{'has-error': loginForm.password.$invalid, 'has-success': loginForm.password.$valid}">
+        <label class="required-star" for="inputPass">
+         CLAP Password
+        </label>
+        <span ng-if="AuthTypesEnabled.demo">
+         (Default:
+         <i>
+          demo
+         </i>
+         )
+        </span>
+        <input class="form-control" id="inputPass" name="password" ng-model="password" placeholder="" required="" type="password"/>
+       </div>
+       <div class="alert alert-danger text-center" ng-show="login_err">
+        Please double-check your username and password and try again.
+       </div>
+       <br/>
+       <input class="btn btn-success center-block" ng-class="" ng-disabled="loginForm.$invalid || submitted" type="submit" value="Log In"/>
+       <p class="text-center" ng-if="submitted">
+        <i class="fa fa-spin fa-spinner">
+        </i>
+        Logging in...
+       </p>
+      </div>
+     </div>
+    </fieldset>
+   </form>
+   <div class="col-sm-6" ng-if="LoginConfigurableHTML.addition_instructions">
+    <span ng-bind-html="LoginConfigurableHTML.addition_instructions" style="display:none;">
+    </span>
+    <h2 class="text-center">
+     CLAP Registration Form
+    </h2>
+    <p>
+     Thank you for taking the time to register for CLAP by filling in the survey below. You will be asked a few questions about your language proficiency and experience with language assessment to help us investigate our research aims. None of the information will be used to identify you.
+    </p>
+    <iframe class="" frameborder="0" height="1000" marginheight="0" marginwidth="0" src="https://docs.google.com/forms/d/e/1FAIpQLSchn4BKPdsI9eZr58IhflvFSKn9WLwm9ke_3YtbVTG8E-k9Mw/viewform?embedded=true" width="100%">
+     Loading…
+    </iframe>
+   </div>
+  </div>
+ </div>
+ <div ng-if="showCreateUserForm">
+  <p class="pull-right">
+   <a href="" ng-click="$parent.showCreateUserForm = false;">
+    Cancel
+   </a>
+  </p>
+  <h2 class="text-center">
+   Create ComPAIR account
+  </h2>
+  <br/>
+  <p class="intro-text">
+   Please provide the required fields below to create your ComPAIR account.
+  </p>
+  <login-create-user-form uses-compair-login="$parent.showComPAIRAccountFieldsCreateUserForm">
+  </login-create-user-form>
+ </div>
+</div>

@@ -1,0 +1,179 @@
+<div class="user-manage-screen">
+
+    <h1>{{ user.displayname }}'s Courses & Accounts</h1>
+
+    <br><br>
+
+    <div class="row">
+
+        <h2 class="col-sm-6">Courses</h2>
+        <form class="col-sm-6 search-courses text-right" role="search" ng-if="courses.length || courseFilters.search || courseFilters.includeSandbox!==null">
+            <div class="input-group">
+                <div class="input-group-btn" uib-dropdown>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" uib-dropdown-toggle>
+                        <span ng-show="courseFilters.includeSandbox===null">All courses</span>
+                        <span ng-show="courseFilters.includeSandbox===false">Regular courses</span>
+                        <span ng-show="courseFilters.includeSandbox===true">Sandbox courses</span>
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a ng-click="courseFilters.includeSandbox=null">All courses</a></li>
+                        <li><a ng-click="courseFilters.includeSandbox=false">Regular courses</a></li>
+                        <li><a ng-click="courseFilters.includeSandbox=true">Sandbox courses</a></li>
+                    </ul>
+                </div>
+                <input class="form-control" type="text" name="search" placeholder="Filter courses by keyword"
+                    ng-model="courseFilters.search">
+            </div>
+        </form>
+    </div>
+
+    <div class="table-responsive" ng-if="courses.length">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Actions</th>
+                    <th>
+                        <a href="" ng-click="updateTableOrderBy('name')">Name</a>
+                    </th>
+                    <th>
+                        <a href="" ng-click="updateTableOrderBy('year')">Year</a>
+                    </th>
+                    <th>
+                        <a href="" ng-click="updateTableOrderBy('term')">Term</a>
+                    </th>
+                    <th>Course Status</th>
+                    <th>
+                        <a href="" ng-click="updateTableOrderBy('course_role')">Course Role</a>
+                    </th>
+                    <th>
+                        <a href="" ng-click="updateTableOrderBy('group_name')">Group</a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="course in courses">
+                    <td class="nowrap">
+                        <a href="" confirmation-needed="dropCourse(course)" keyword="user" ng-if="loggedInUserId != user.id || canManageUsers">Drop</a>
+                    </td>
+                    <td><a ng-href="#/course/{{course.id}}"><i class="fa fa-book"></i> {{course.name}}</a></td>
+                    <td>{{course.year}}</td>
+                    <td>{{course.term}}</td>
+                    <td>
+                        <span ng-if="course.sandbox">Sandbox course</span>
+                        <span ng-if="course.before_start && !course.sandbox">Not yet started</span>
+                        <span ng-if="course.completed && !course.sandbox">Completed</span>
+                        <span ng-if="course.in_progress && !course.sandbox">Currently in progress</span>
+                    <td>
+                        <select ng-model="course.course_role"
+                                ng-options="course_role as course_role for course_role in course_roles"
+                                ng-change="updateRole(course)"></select>
+                    </td>
+                    <td>
+                        <select ng-model="course.group_id"
+                                ng-options="g.id as g.name for g in course.groups"
+                                ng-change="updateGroup(course)"
+                                ng-if="course.groups.length">
+                            <option value="">- None -</option>
+                        </select>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center" ng-if="courses.length">
+        <ul uib-pagination total-items="totalNumCourses" ng-model="courseFilters.page"
+            max-size="10" class="pagination-sm" boundary-links="true"
+            direction-links="false" items-per-page="courseFilters.perPage"
+            num-pages="numPages" ng-hide="numPages == 1"></ul>
+    </div>
+
+    <div ng-if="!courses.length">
+        <hr />
+        <p ng-if="!courseFilters.search && courseFilters.includeSandbox===null">No courses found. Select <a href="#/users">another user</a>?</p>
+        <p ng-if="!courseFilters.search && courseFilters.includeSandbox!==null">No courses found. Select <a href="#/users">another user</a> or try another filter above.</p>
+        <p ng-if="courseFilters.search">No courses found for this search. Please try another search term above.</p>
+    </div>
+
+    <br>
+
+    <div ng-if="AuthTypesEnabled.lti">
+
+        <div class="row">
+            <h2 class="col-sm-12">LTI account links</h2>
+        </div>
+
+        <div class="table-responsive" ng-if="lti_users.length">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th>Consumer Key</th>
+                        <th>ID</th>
+                        <th>Full Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="lti_user in lti_users">
+                        <td class="nowrap">
+                            <a title="Unlink this LTI account" href="" confirmation-needed="unlinkLTI(lti_user)" keyword="LTI account link" class="delete-lti-user" ng-if="canManageUsers">
+                                Unlink
+                            </a>
+                        </td>
+                        <td>{{lti_user.oauth_consumer_key}}</td>
+                        <td>{{lti_user.lti_user_id}}</td>
+                        <td>{{lti_user.lis_person_name_full}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div ng-if="!lti_users.length">
+            <hr />
+            <p>This user does not have any LTI account links</p>
+        </div>
+
+        <br><br>
+
+    </div>
+
+    <div ng-if="AuthTypesEnabled.cas || AuthTypesEnabled.saml">
+
+        <div class="row">
+            <h2 class="col-sm-12">CWL account links</h2>
+        </div>
+
+        <div class="table-responsive" ng-if="third_party_users.length">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Actions</th>
+                        <th>Type</th>
+                        <th>ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="third_party_user in third_party_users">
+                        <td class="nowrap">
+                            <a title="unlink this CWL account" href="" confirmation-needed="deleteThirdPartyUser(third_party_user)" keyword="CWL account link" class="delete-third-party-user" ng-if="canManageUsers">
+                                Unlink
+                            </a>
+                        </td>
+                        <td>{{third_party_user.third_party_type}}</a></td>
+                        <td>{{third_party_user.unique_identifier}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div ng-if="!third_party_users.length">
+            <hr />
+            <p>This user does not have any CWL account links</p>
+        </div>
+
+        <br><br>
+
+    </div>
+
+</div>

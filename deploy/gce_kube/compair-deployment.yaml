@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: compair
+  labels:
+    app: compair
+spec:
+  ports:
+    - port: 80
+      targetPort: 3031
+  selector:
+    app: compair
+    tier: frontend
+  type: LoadBalancer
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: compair
+  labels:
+    app: compair
+spec:
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: compair
+        tier: frontend
+    spec:
+      containers:
+      - name: compair-app
+        image: ubcctlt/compair-app
+        env:
+        - name: DB_HOST
+          value: compair-mysql
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_USERNAME
+          value: compair
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysql-pass
+              key: password.txt
+        - name: DB_NAME
+          value: compair
+        - name: CELERY_BROKER_URL
+          value: redis://compair-redis:6379
+        ports:
+        - containerPort: 3031
+          name: compair-app
+        volumeMounts:
+        - name: nfs-persistent-storage
+          mountPath: /code/persistent
+      volumes:
+      - name: nfs-persistent-storage
+        persistentVolumeClaim:
+          claimName: nfs-pv-claim

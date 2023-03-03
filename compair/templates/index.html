@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<!--[if IE 9]><html ng-app = "myApp" auth-login class="ie9"><![endif]-->
+<html ng-app="myApp" auth-login>
+    <head>
+        <base href="/app/">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/png" href="{{ static_img_path }}black-favicon-32x32.png" sizes="32x32" />
+        <link rel="icon" type="image/png" href="{{ static_img_path }}black-favicon-16x16.png" sizes="16x16" />
+        <title ng-bind="(title ? title+' | ' : '') + 'ComPAIR Learning Application'">ComPAIR Learning Application</title>
+        <meta name="description" content="The ComPAIR learning application pairs student answers for deeper learning through comparison of peer work. This is the site for live courses at UBC.">
+
+        <!-- Javascript Libraries -->
+        <!-- font awesome CDN -->
+        <script src="https://use.fontawesome.com/5896577a49.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.5.11/ckeditor.js"></script>
+        <script src="//platform.twitter.com/widgets.js"></script>
+
+        <!-- build:prod_minify_js_libs -->
+        <script src="{{ bower_js_libs }}"></script>
+        <!-- endbuild -->
+
+        <!-- Non-Bower Managed Includes -->
+
+        <!-- ComPAIR Stylesheet -->
+        <!-- build:prod_compile_minify_css -->
+        <link rel="stylesheet" href="{{ compair_css }}">
+        <!-- endbuild -->
+
+        <!-- MathJax, should figure out how to bower manage this -->
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_HTMLorMML&delayStartupUntil=configured"></script>
+        <script>
+            // config MathJax
+            MathJax.Hub.Config({
+                skipStartupTypeset: true
+            });
+            MathJax.Hub.Configured();
+
+            // config CKEDITOR
+            CKEDITOR.plugins.addExternal( 'combinedmath', '/app/lib_extension/ckeditor/plugins/combinedmath/' );
+            CKEDITOR.plugins.addExternal( 'autolink', '/app/lib_extension/ckeditor/plugins/autolink/' );
+            CKEDITOR.addCss( '@media screen and (-webkit-min-device-pixel-ratio:0) { .cke_editable { font-size: 16px !important; } }' );
+            CKEDITOR.on('dialogDefinition', function(ev) {
+                var dialogName = ev.data.name;
+                var dialog = ev.data.definition.dialog;
+                var dialogDefinition = ev.data.definition;
+
+                if (dialogName === 'link') {
+                    var target = dialogDefinition.getContents('target');
+                    target.get('linkTargetType')['default'] = '_blank';
+                }
+            });
+        </script>
+
+        <!-- build:prod_minify_js -->
+        <script src="{{ compair_js }}"></script>
+        <!-- endbuild -->
+
+        <script type="text/javascript">
+            (function() {
+                angular.module('ubc.ctlt.compair.login')
+                .run( ['AuthTypesEnabled', 'LoginConfigurableHTML', function(AuthTypesEnabled, LoginConfigurableHTML) {
+                    AuthTypesEnabled.app = {{ 'true' if app_login_enabled else 'false' }};
+                    AuthTypesEnabled.cas = {{ 'true' if cas_login_enabled else 'false' }};
+                    AuthTypesEnabled.saml = {{ 'true' if saml_login_enabled else 'false' }};
+                    AuthTypesEnabled.lti = {{ 'true' if lti_login_enabled else 'false' }};
+                    AuthTypesEnabled.demo = {{ 'true' if demo else 'false' }};
+
+                    LoginConfigurableHTML.addition_instructions = {{ login_addition_instructions_html|tojson|safe }};
+                    LoginConfigurableHTML.cas = {{ cas_login_html|tojson|safe }};
+                    LoginConfigurableHTML.saml = {{ saml_login_html|tojson|safe }};
+                }]);
+                angular.module('ubc.ctlt.compair.attachment')
+                .run( ['UploadSettings', function(UploadSettings) {
+                    UploadSettings.attachmentExtensions = {{ attachment_extensions|string|safe if attachment_extensions else [] }};
+                    UploadSettings.attachmentUploadLimit = {{ attachment_upload_limit if attachment_upload_limit else 262144000 }};
+                    {% if kaltura_enabled %}
+                    UploadSettings.kalturaExtensions = {{ kaltura_extensions|string|safe if attachment_extensions else [] }};
+                    {% endif %}
+                    UploadSettings.attachmentPreviewExtensions = {{ attachment_preview_extensions|string|safe if attachment_preview_extensions else [] }};
+                }]);
+                angular.module('ubc.ctlt.compair.learning_records.learning_record')
+                .run( ['$location', 'LearningRecordSettings', function($location, LearningRecordSettings) {
+                    LearningRecordSettings.xapi_enabled = {{ 'true' if xapi_enabled else 'false' }};
+                    LearningRecordSettings.caliper_enabled = {{ 'true' if caliper_enabled else 'false' }};
+                    var baseUrl = '{{lrs_app_base_url if lrs_app_base_url else ''}}';
+                    if (baseUrl == '') { baseUrl = $location.absUrl().replace("app/#"+$location.url(), ""); }
+                    LearningRecordSettings.baseUrl = baseUrl;
+                }]);
+                angular.module('ubc.ctlt.compair.user')
+                .run( ['UserSettings', function(UserSettings) {
+                    UserSettings.notifications = {{ 'true' if notifications_enabled else 'false' }};
+                    UserSettings.expose_email_to_instructor = {{ 'true' if expose_email_to_instructor else 'false' }};
+                    UserSettings.allow_student_change_name = {{ 'true' if allow_student_change_name else 'false' }};
+                    UserSettings.allow_student_change_display_name = {{ 'true' if allow_student_change_display_name else 'false' }};
+                    UserSettings.allow_student_change_student_number = {{ 'true' if allow_student_change_student_number else 'false' }};
+                    UserSettings.allow_student_change_email = {{ 'true' if allow_student_change_email else 'false' }};
+                }]);
+                angular.module('ubc.ctlt.compair.session')
+                .run(['ImpersonationSettings', 'Session', function(ImpersonationSettings, Session) {
+                    Session.detect_page_reload_and_flush();
+                    ImpersonationSettings.enabled = {{ 'true' if impersonation_enabled else 'false' }};
+                }]);
+                angular.module('ubc.ctlt.compair.common')
+                {% if static_img_path %}
+                .run( ['logoSettings', function(logoSettings) {
+                    logoSettings.path = '{{ static_img_path }}';
+                }]);
+                {% endif %}
+            })();
+        </script>
+        {% if ga_tracking_id %}
+            <!-- Global site tag (gtag.js) - Google Analytics -->
+            <script async src="https://www.googletagmanager.com/gtag/js?id={{ ga_tracking_id }}"></script>
+            <script>
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                      gtag('js', new Date());
+
+                  gtag('config', '{{ ga_tracking_id }}');
+            </script>>
+        {% endif %}
+    </head>
+    <body>
+
+    <!--[if lt IE 9 ]>
+    <div class="alert-warning">
+        <i class="fa fa-warning"></i>
+        This application only supports <strong>Internet Explorer 9 and higher</strong>. Please <a href="http://windows.microsoft.com/en-ca/internet-explorer/download-ie">upgrade your browser</a> or download <a href="https://www.mozilla.org/en-US/firefox/new/">Firefox</a>, <a href="http://www.google.com/chrome/">Chrome</a>, or <a href="https://www.apple.com/ca/safari/">Safari</a> to use instead. Thank you!
+    </div>
+    <![endif]-->
+
+    <!-- Main Navbar -->
+    <navbar-component></navbar-component>
+    <ng-include src="'modules/route/route-error-partial.html'"></ng-include>
+
+    <!-- Toast Messages from AngularJS-Toaster -->
+    <toaster-container toaster-options="{'limit': 1, 'position-class': 'toast-top-full-width-opaque',  'prevent-duplicates': true}"></toaster-container>
+
+    <!-- Main Viewport, where all the module partials are shown -->
+    <div class="container">
+        <!-- ngView, should have it's own row and column css organization -->
+        <div ng-view="" autoscroll></div>
+    </div>
+    </body>
+</html>

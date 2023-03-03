@@ -1,0 +1,59 @@
+<div class="course-select-screen">
+    <div ng-show="!showDuplicateForm">
+        <h1>Set ComPAIR Course</h1>
+        <br />
+        <p class="intro-text">
+            You're almost ready to start using ComPAIR!
+            Simply <strong>select</strong> an existing or <strong>create</strong> a new ComPAIR course to begin making assignments for your students.
+        </p>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Option A:</h2>
+                <h1>Use Existing Course ({{totalNumCourses}} Found)</h1>
+
+                <!-- Course listing -->
+                <div class="course-select-list">
+                    <table class="table table-striped" ng-if="courses.length">
+                        <tr>
+                            <th ng-repeat="header in headers">{{header}}</th>
+                        </tr>
+                        <tr ng-repeat="course in courses">
+                            <td width="50%">{{course.name}} ({{course.year}} {{course.term}})</td>
+                            <td>
+                                <div class="text-right action-btns">
+                                    <a class="btn btn-success use-duplicate" ng-click="selectCourse(course.id)">
+                                        Use This
+                                    </a>
+                                    <a class="btn btn-default use-duplicate" ng-click="selectDuplicateCourse(course)">
+                                        Duplicate This
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div class="text-center" ng-if="courses.length">
+                        <ul uib-pagination total-items="totalNumCourses" ng-model="courseFilters.page"
+                            max-size="10" class="pagination-sm" boundary-links="true"
+                            direction-links="false" items-per-page="courseFilters.perPage"
+                            num-pages="numPages" ng-hide="numPages == 1"></ul>
+                    </div>
+
+                    <div ng-if="!courses.length">
+                        <p>No courses currently found for you in ComPAIR. Please create a new course using the form on this screen.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h2>Option B:</h2>
+                <ng-include src="'modules/course/course-partial.html'"></ng-include>
+            </div>
+        </div>
+    </div>
+    <div ng-if="showDuplicateForm">
+        <div ng-controller="CourseDuplicateController">
+            <ng-include src="'modules/course/course-duplicate-modal-partial.html'"></ng-include>
+        </div>
+    </div>
+</div>

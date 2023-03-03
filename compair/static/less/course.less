@@ -1,0 +1,92 @@
+
+
+/***** COURSE SCREEN *****/
+
+.course-screen {
+
+  margin-bottom: 3em;
+
+  ::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+  }
+
+  /* search box */
+  .searchCourse {
+    margin-top: 1.5em;
+
+    .form-group.filter {
+      margin: 0.4em 0 0.4em 0.4em;
+    }
+  }
+
+  /* class for div surrounding each assignment */
+  .each-assignment {
+
+    .item-list();
+
+    /* action buttons need to stack */
+    .btn-success, .btn-default {
+      margin: 0 0 1em .5em;
+    }
+
+    /* class for p tag displaying additional text below assignment buttons */
+    .below-button-text {
+      margin-top: 1em;
+      color: @breadcrumb-gray;
+      font-style: italic;
+    }
+
+    /* limit how much of the assignment description appears on course page */
+    .assignment-desc {
+      max-height: 9em;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding-right: 0.5em;
+    }
+
+    /* ul for metadata */
+    .assignment-metadata-list {
+
+      .metadata();
+      margin-top: 2.5em;
+
+    }//closes assignment-metadata-list
+
+  }//closes each-assignment
+
+  /* add border to first assignment */
+  .first-child {
+    border-top: 1px solid @border-gray;
+  }
+
+}//closes course-screen
+
+.course-select-screen {
+    .course-select-list {
+        margin-top: 4.1em;
+    }
+    /* action buttons need to stack */
+    .use-duplicate {
+      margin: 0 0 1em .5em;
+    }
+    /* stronger separation between assignments than between dates */
+    .assignment-divider {
+      height: 4px;
+      border: 0;
+      background: @green-blue;
+    }
+}
+
+.manage-screen {
+    #lti_refresh_btn {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+}

@@ -1,0 +1,105 @@
+<div class="tab-header">
+    <div class="row">
+        <h2 class="col-sm-6 col-md-8">
+            Participation
+            <span ng-show="gradebookFilters.group && !gradebookFilters.student">for "{{gradebookFilters.group}}"</span>
+            <span ng-show="gradebookFilters.student">for "{{ gradebookFilters.student.name }}"</span>
+        </h2>
+        <div class="col-sm-6 col-md-4 text-right multi-filters">
+            <div>
+                <span class="filter" ng-if="canManageAssignment">
+                    <label>Show: &nbsp;</label>
+                    <select ng-if="groups.length > 0" ng-model="gradebookFilters.group" class="nullable" chosen
+                            ng-options="group.id as group.name for group in groups">
+                        <option value="">All groups</option>
+                    </select>
+                    <select ng-model="gradebookFilters.student" class="nullable" chosen
+                            ng-options="user.id as user.name for user in users | orderBy: 'name'">
+                        <option value="">All students</option>
+                    </select>
+                </span>
+            </div>
+        </div>
+    </div>
+    <p class="intro-text"><span ng-if="canManageAssignment">To export data reports for participation and other application statistics, go to <a ng-href="#/report">Download Reports</a>.</span> <span ng-if="includeScores">Note that <strong>answer scores are normalized</strong> from the scores assigned using ComPAIR's <a href="http://ubc.github.io/compair/site/best-practices.html#scores" target="_blank">scoring algorithm</a> and are not reflective of a straight win-loss record. The top-ranked answer(s) for the assignment receive 100%. All others receive a lower percentage based on how well they did in comparison.</span></p>
+    <div ng-if="!gradebook.length">
+        <hr />
+        <p>No students found for this course. Would you like to <a ng-href="#/course/{{courseId}}/user">manage users</a>?</p>
+    </div>
+</div>
+<div class="table-responsive" ng-if="gradebook.length">
+    <table class="table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    <a href="" ng-click="updateTableOrderBy('user.firstname')">First Name</a>
+                </th>
+                <th>
+                    <a href="" ng-click="updateTableOrderBy('user.lastname')">Last Name</a>
+                </th>
+                <th>
+                    <a href="" ng-click="updateTableOrderBy('user.student_number')">Student Number</a>
+                </th>
+                <th class="text-center" ng-if="!includeScores">
+                    <a href="" ng-click="updateTableOrderBy('num_answers')">Answered</a>
+                </th>
+                <th class="text-center" ng-if="includeScores">
+                    <a href="" ng-click="updateTableOrderBy('score')">Answer Score</a>
+                </th>
+                <th class="text-center attachments" ng-if="showAttachments">
+                    <a href="" ng-click="updateTableOrderBy('attachments')">Attachments</a>
+                    <button ng-click="downloadAllAttachments()"
+                            ng-if="!(gradebookFilters.student || gradebookFilters.group)"
+                            ng-disabled="downloadAllBusy"
+                            title="Download all attachments"
+                            class="btn btn-sm btn-primary">
+                        <i ng-if="!downloadAllBusy" aria-hidden="true"
+                                                    class="fa fa-download"></i>
+                        <i ng-if="downloadAllBusy" class="fa fa-spin
+                                                          fa-spinner"></i>
+                        Download All
+                    </button>
+                </th>
+                <th class="text-center">
+                    <a href="" ng-click="updateTableOrderBy('num_comparisons')">Comparisons</a>
+                </th>
+                <th class="text-center" ng-if="includeSelfEval">
+                    <a href="" ng-click="updateTableOrderBy('num_self_evaluation')">Self-Evaluation</a>
+                </th>
+                <th class="text-center">
+                    <a href="" ng-click="updateTableOrderBy('grade')">Participation Grade</a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="entry in gradebook | filter:groupFilter() | orderBy:predicate:reverse">
+                <td>{{entry.user.firstname}}</td>
+                <td>{{entry.user.lastname}}</td>
+                <td>{{entry.user.student_number}}</td>
+                <td class="text-center text-success" ng-if="!includeScores && entry.num_answers > 0"><strong>Yes</strong></td>
+                <td class="text-center text-danger" ng-if="!includeScores && entry.num_answers == 0"><strong>No</strong></td>
+                <td class="text-center" ng-if="includeScores">
+                    <strong>
+                        <span ng-if="!isNumber(entry.score)">{{entry.score}}</span>
+                        <span ng-if="isNumber(entry.score)">{{entry.score|number:0}}%</span>
+                    </strong>
+                </td>
+                <td class="text-center" ng-if="showAttachments">
+                    <span ng-if="!entry.file"> n/a </span>
+                    <a ng-if="entry.file" target="_blank" ng-href="/app/attachment/{{entry.file.name}}?name={{ entry.download_file_name+'.'+entry.file.extension | encodeURIComponent}}">View &raquo;</a>
+                </td>
+                <td class="text-center" ng-class="{
+                    'text-danger': entry.num_comparisons == 0,
+                    'text-warning': entry.num_comparisons > 0 &&
+                                entry.num_comparisons < totalComparisonsRequired,
+                    'text-success': entry.num_comparisons >= totalComparisonsRequired
+                    }">
+                    <strong>{{entry.num_comparisons}} / {{ totalComparisonsRequired }}</strong>
+                </td>
+                <td class="text-center text-success" ng-if="includeSelfEval && entry.num_self_evaluation > 0"><strong>Yes</strong></td>
+                <td class="text-center text-danger" ng-if="includeSelfEval && entry.num_self_evaluation == 0"><strong>No</strong></td>
+                <td class="text-center"><strong>{{entry.grade|number:0}}%</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</div>

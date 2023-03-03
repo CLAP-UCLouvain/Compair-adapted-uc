@@ -1,0 +1,179 @@
+<div ng-show="example">
+    <h1>{{answerName}}</h1>
+    <p class="intro-text">This is one answer in the pair students will review as the first comparison for this assignment.</p>
+</div>
+<div ng-show="!example">
+    <h1 ng-if="method == 'create' && !saveDraft">Answer</h1>
+    <h1 ng-if="method == 'edit' || saveDraft">Edit Answer {{ answer.draft ? 'Draft' : '' }}</h1>
+</div>
+
+<div ng-hide="comparison_example">
+
+    <p class="intro-text">Answer the assignment with a file attachment and/or response in the text editor. Please note <strong>answers are not automatically saved</strong> as you type. However, you may manually save a draft of your answer below.</p>
+
+    <p class="assignment-toggle"><a href="" ng-click="showAssignment = !showAssignment">
+        <i class="fa fa-chevron-down" ng-show="showAssignment "></i>
+        <i class="fa fa-chevron-right" ng-hide="showAssignment "></i>
+        Show description for assignment "{{assignment.name}}"
+    </a></p>
+
+    <div ng-show="showAssignment" class="standalone-assignment">
+        <h2><i class="fa fa-comments"></i> {{assignment.name}}</h2>
+        <rich-content content="assignment.description" attachment="assignment.file"></rich-content>
+    </div>
+
+</div>
+
+<form class="form" name="answerForm" novalidate confirm-form-exit form-type="answer">
+    <fieldset>
+        <legend>Answer Details</legend>
+        <div class="h3 text-center" ng-show="!canManageAssignment && showCountDown && comparison_example !== true">
+            <timer end-time="assignment.answer_end" interval="1000">
+                <span ng-show="minutes > 0 || seconds > 0" title="Official time remaining until deadline" class="bg-danger alert text-danger"><i class="glyphicon glyphicon-time"></i> {{minutes}} minutes {{seconds}} seconds left</span>
+                <span ng-show="minutes == 0 && seconds == 0" class="bg-danger alert text-danger"><i class="glyphicon glyphicon-time"></i> DEADLINE REACHED</span>
+            </timer>
+            <br /><br />
+            <span class="h4">(Answer must be submitted before deadline to be accepted)</span>
+        </div>
+
+        <div class="instructional-text">
+                <p ng-if="canManageAssignment && !comparison_example">Answers submitted as an instructor or TA <strong>will be included</strong> in comparisons unless this option is unchecked below. All answers will appear to students when the assignment completes.</p>
+                <p>Allowed file types for attachments include {{ UploadValidator.getAttachmentExtensionsForDisplay() }}, with a maximum file size of <strong>{{UploadValidator.getAttachmentUploadLimit() | filesize }}</strong>. Any file changes will be saved when you <strong>save or submit this answer</strong> but not before.</p>
+        </div>
+
+        <div class="form-group" ng-class="{'has-error':!answer.user_id}" ng-if="!assignment.enable_group_answers && canManageAssignment && answer.draft && comparison_example !== true">
+            <label class="required-star" for="user_id">Submit As</label>
+            <select id="user_id" name="user_id" required
+                    ng-model="answer.user_id" class="form-control" chosen width="'100%'"
+                    ng-options="user.id as user.fullname_sortable for user in classlist"
+                    ng-change="submitAsUserChanged(answer.user_id)">
+                <option value="">- Select a user -</option>
+            </select>
+        </div>
+        
+        <div class="row">
+
+            <div class="form-group col-md-6" ng-class="{'has-error':!answer.user_id && !answer.group_id}" ng-if="assignment.enable_group_answers && canManageAssignment && answer.draft && comparison_example !== true">
+                <label class="required-star" for="user_id">Submit As Instructor/Teaching Assistant</label>
+                <select id="user_id" name="user_id" required-if="!answer.group_id"
+                        ng-model="answer.user_id" class="form-control" chosen width="'100%'"
+                        ng-options="user.id as user.name for user in instructors"
+                        ng-change="submitAsUserChanged(answer.user_id)">
+                    <option value="">- Select a user -</option>
+                </select>
+            </div>
+    
+            <div class="form-group col-md-6" ng-class="{'has-error':!answer.user_id && !answer.group_id}" ng-if="assignment.enable_group_answers && groups.length > 0 && canManageAssignment && answer.draft && comparison_example !== true">
+                <label class="required-star" for="group_id">Or As Student Group</label>
+                <select id="group_id" name="group_id" required-if="!answer.user_id"
+                        ng-model="answer.group_id" class="form-control" chosen width="'100%'"
+                        ng-options="group.id as group.name for group in groups"
+                        ng-change="submitAsGroupChanged()">
+                    <option value="">- Select a group -</option>
+                </select>
+            </div>
+        
+        </div>
+        
+        <!--if not a student/example AND no one credited AND save attempted -->
+        <p class="alert alert-warning" ng-if="canManageAssignment && comparison_example !== true && (!answer.user_id && !answer.group_id) && saveAnswerAttempted">Who should be credited with this answer?</p>
+
+        <div class="form-group" ng-if="canManageAssignment && !selectedIsStudent && comparison_example !== true && answer.user_id == loggedInUserId">
+            <label for="comparable" ng-class="!answer.draft ? 'text-muted not-bold' : ''">
+                <input type="checkbox" id="comparable" name="comparable"
+                    ng-model="answer.comparable"
+                    ng-false-value="false"
+                    ng-disabled="!answer.draft" >&nbsp;
+                Allow this instructor answer to appear in comparison pairings (when the algorithm selects it)
+            </label>
+        </div>
+
+        <div>
+            <label class="required-star" for="importFile">Answer Attachment and/or Text</label>
+            <p ng-show="((uploader.queue.length && !answer.existingFile) || (!answer.file && answer.existingFile) || (answer.rotated && answer.existingFile))" class="alert alert-info"><strong>Save<span ng-show="answer.draft"> or submit</span> this answer to save changes made to your attachment</strong>, or cancel this window to revert to the attachment that appeared when you started editing.</p>
+            <input type="file" nv-file-select uploader="uploader" ng-click="answerForm.$setDirty()" id="importFile" ng-hide="(uploader.queue.length) || (answer.file && answer.uploadedFile)" multiple/>
+            <br />
+            <div ng-repeat="item in uploader.queue">
+                <div class="row">
+                    <div class="col-md-2">
+                        <a ng-click="item.cancel();item.remove();resetFileUploader();deleteFile(answer.file)" href="">
+                            Remove
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <div ng-if="!canSupportPreview(item) || item.isReady || item.isUploading || item.isSuccess">
+                            <i class="fa fa-paperclip"></i> File: {{item.file.name}}
+                        </div>
+                    </div>
+                    <div class="col-md-2">{{item.file.size/1024/1024|number:2}} MB</div>
+                    <div class="col-md-2" ng-if="item.progress < 100"><strong>{{item.progress}}% uploaded</strong></div>
+                    <div class="col-md-2" ng-if="item.progress == 100 && !item.isSuccess"><strong>Storing file...</strong></div>
+                    <div class="col-md-2" ng-if="item.progress == 100 && item.isSuccess">Attached</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div ng-if="canSupportPreview(item)">
+                            <!-- trigger upload once preview is loaded -->
+                            <image-viewer rotated="answer.rotated" ng-model="item._file" on-load-callback="item.upload()"/>
+                        </div>
+                    </div>
+                </div>
+                <br /><br />
+            </div>
+            <br />
+        </div>
+        <div ng-show="answer.file && answer.uploadedFile && !uploader.queue.length">
+            <div class="row">
+                <div class="col-md-2">
+                    <a ng-click="deleteFile(answer.file)" href="">
+                        Remove
+                    </a>
+                </div>
+                <div class="col-md-10">
+                    <i class="fa fa-paperclip"></i> File: {{answer.file.alias}}
+                </div>
+            </div>
+            <br />
+        </div>
+        
+        <!-- if no answer content provided AND save attempted -->
+        <p class="alert alert-warning" ng-if="(!answer.content && uploader.queue.length < 1) && saveAnswerAttempted">Please add content in the form of a file upload (above) or rich text (below) to save or submit this answer.</p>
+        
+        <div class="form-group">
+            <textarea ng-model="answer.content" id="answerContent"
+                class="form-control" rows="8" ckeditor="editorOptions" ng-required="!(uploader.queue.length || uploadedFile || answer.file)">
+            </textarea>
+        </div>
+    </fieldset>
+    
+    <!-- different helper messages for pre or post save attempts -->
+    <p class="text-center text-muted" ng-if="!saveAnswerAttempted"><span class="required-star "></span> = required (please make sure these areas are filled in)</p>
+    <p class="text-center text-warning" ng-if="saveAnswerAttempted"><strong><i class="glyphicon glyphicon-warning-sign"></i></strong> {{helperMsg}}</p>
+
+    <div class="text-center" ng-show="answer.draft && (!canManageAssignment || answer.user_id == loggedInUserId)">
+        <input type="submit" class="btn btn-default btn-lg" value="Save Draft" ng-show="!canManageAssignment"
+            ng-click="showErrors($event, answerForm.$valid, answer.content, uploader.queue.length, true)"
+            ng-disabled="submitted || (uploader.queue.length && !uploader.queue[0].isSuccess) || uploader.waitForKalturaComplete" />
+        &nbsp; &nbsp;
+        <input type="submit" class="btn btn-success btn-lg" value="Submit"
+            ng-click="showErrors($event, answerForm.$valid, answer.content, uploader.queue.length, false)"
+            ng-disabled="submitted || (uploader.queue.length && !uploader.queue[0].isSuccess) || uploader.waitForKalturaComplete" />
+        <p ng-if="submitted && !saveDraft && !isImpersonating">
+                <i class="fa fa-spin fa-spinner"></i>
+                &nbsp; Submitting answer...
+        </p>
+        <p ng-if="submitted && saveDraft && !isImpersonating">
+                <i class="fa fa-spin fa-spinner"></i>
+                &nbsp; Saving draft...
+        </p>
+    </div>
+    <div ng-show="!answer.draft || (canManageAssignment && answer.user_id != loggedInUserId)" class="text-center">
+        <input type="submit" class="btn btn-success btn-lg center-block" value="Save"
+            ng-click="showErrors($event, answerForm.$valid, answer.content, uploader.queue.length, false)"
+            ng-disabled="submitted || (uploader.queue.length && !uploader.queue[0].isSuccess) || uploader.waitForKalturaComplete" />
+        <p ng-if="submitted">
+                <i class="fa fa-spin fa-spinner"></i>
+                &nbsp; Saving answer...
+        </p>
+    </div>
+</form>

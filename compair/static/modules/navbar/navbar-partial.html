@@ -1,0 +1,105 @@
+<div role="navigation" bs-navbar>
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <!-- Button to expand menu when navbar is collapsed on small displays -->
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#compair-navbar-collapse" ng-click="isCollapsed = !isCollapsed">
+                    <span class="sr-only">Show Navigation Menu</span>
+                    <i class="fa fa-bars"></i> Menu
+                </button>
+                <a class="navbar-brand" href="#/" title="CLAP Home"><compair-logo type="'small'"></compair-logo></a>
+            </div>
+            <!-- All elements in this div can be collapsed on small displays -->
+            <div class="navbar-collapse" id="compair-navbar-collapse" ng-class="{collapse: isCollapsed}">
+                <ul id="logged-in-nav-options" class="nav navbar-nav" ng-show="loggedInUser.isLoggedIn()">
+                    <li ng-if="canManageAssignments">
+                        <a ng-href="#/report" id="download-report-btn">
+                            <i class="fa fa-bar-chart-o"></i>
+                            Download Reports
+                        </a>
+                    </li>
+                    <li ng-if="canCreateCourses">
+                        <a ng-href="#/course/create" id="create-course-btn">
+                            <i class="fa fa-plus"></i>
+                            Add Course
+                        </a>
+                    </li>
+                    <li ng-if="canCreateUsers">
+                        <a ng-href="#/user/create" id="create-user-btn">
+                            <i class="fa fa-user-plus"></i>
+                            Add User
+                        </a>
+                    </li>
+                    <li ng-if="canManageUsers">
+                        <a ng-href="#/users" id="view-users-btn">
+                            <i class="fa fa-users"></i>
+                            Manage All Users
+                        </a>
+                    </li>
+                    <li ng-if="canManageUsers && AuthTypesEnabled.lti">
+                        <a ng-href="#/lti/consumer" id="manage-lti-consumers-btn">
+                            <i class="fa fa-cogs"></i>
+                            Manage LTI
+                        </a>
+                    </li>
+                </ul>
+                <!-- Not Logged In Options -->
+                <ul class="nav navbar-nav navbar-right" ng-hide="loggedInUser.isLoggedIn()">
+                    <li id="login-btn">
+                        <a href="" ng-click="showLogin();">Log In</a>
+                    </li>
+                </ul>
+                <!-- Logged In Options -->
+                <ul class="nav navbar-nav navbar-right" ng-if="loggedInUser.isLoggedIn()">
+                    <!-- <li class="dropdown" id="notifications">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#notifications">
+                            <i class="fa fa-envelope-o"></i>
+                        </a>
+                        <div notification></div>
+                    </li> -->
+                    <li uib-dropdown>
+                        <a href="" id="menu-dropdown" uib-dropdown-toggle>
+                            {{loggedInUser.displayname}} <i class='fa fa-angle-down'></i>
+                        </a>
+                        <!-- User drop down menu -->
+                        <ul class="dropdown-menu" aria-labelledby="menu-dropdown">
+                            <li>
+                                <a id="own-profile-link" href="#/user/{{loggedInUser.id}}">
+                                    <i class="fa fa-user fa-fw"></i> Profile
+                                </a>
+                            </li>
+                            <li ng-if="impersonating">
+                                <a id="close-student-view-link" href="" ng-click="stop_impersonate()">
+                                    <i class="fa fa-eye-slash fa-fw"></i> Close Student View
+                                </a>
+                            </li>
+                            <li ng-if="canStartStudentView && impersonationEnabled">
+                                <a id="student-view-link" href="" ng-click="selectStudentView()">
+                                    <i class="fa fa-eye fa-fw"></i> Student View
+                                </a>
+                            </li>
+                            <li ng-controller="LogoutController">
+                                <a href="" ng-click="logout();" id="logout-link">
+                                    <i class="fa fa-sign-out fa-fw"></i> Log Out
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <ul class="breadcrumb-trail">
+        <li ng-repeat="breadcrumb in breadcrumbs.get()
+            track by breadcrumb.path" ng-if="!($first && $last)">
+            <a ng-class="{'last-crumb': $last}" ng-href="#{{ breadcrumb.path }}">
+                <span ng-bind="breadcrumb.label"></span>
+            </a>
+            <span ng-if="!$last">&nbsp;&raquo; &nbsp;</span>
+        </li>
+    </ul>
+    <ng-include src="'modules/common/demo-warning-template.html'"></ng-include>
+    <ng-include src="'modules/common/impersonation-visual-cue-template.html'"></ng-include>
+
+</div>
+

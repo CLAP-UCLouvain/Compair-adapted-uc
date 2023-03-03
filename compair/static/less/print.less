@@ -1,0 +1,157 @@
+
+
+/***** PRINT *****/
+
+@media print {
+
+    /* set page margins */
+    @page {
+        margin: .5in;
+    }
+
+    /* use black font */
+    * {
+        color: #000 !important;
+    }
+
+    /* for readability */
+    body {
+        font-family:  'Clarendon Std', 'Century Old Style Std', 'Century Schoolbook', Georgia, serif;
+        line-height: 1.25;
+        background: #fff;
+    }
+
+    /* hide elements */
+    .navbar,
+    .breadcrumb-trail,
+    .sub-nav,
+    .manager-actions,
+    .nav-tabs,
+    .btn-success,
+    .btn-reply,
+    .btn-default,
+    #comments-tab .btn-primary,
+    .btn-info,
+    .read-more,
+    .score-display,
+    .filter,
+    .evaluations-screen .form-group,
+    .below-button-text,
+    .each-header img,
+    .answer a > img,
+    .intro-text,
+    .assignment-screen .assignment-metadata-list,
+    .h4 img,
+    .each-attachment-content p {
+        display: none;
+    }
+
+    /* shrink titles, text */
+    h1,
+    h2 {
+        font-size: 150%;
+    }
+    h3 {
+        font-size: 130%;
+    }
+    h4,
+    .h4,
+    h5 {
+        font-size: 120%;
+    }
+    .h4,
+    h5 {
+        font-weight: normal;
+    }
+    .content,
+    .reply-heading {
+        font-size: 90% !important;
+    }
+
+    /* change blue backgrounds to gray */
+    .btn-primary,
+    .btn-primary[disabled],
+    legend {
+        background: #fff;
+        border: 1px solid @border-gray;
+    }
+
+    /* restrain images */
+    img {
+        max-width: 100%;
+    }
+
+    /* remove Bootstrap () after some links */    
+    a[href=""]:after {
+        content: "";
+    }
+
+    /* metadata headers for answers and comparisons */
+    .each-header {
+        padding: .5em;
+        font-weight: bold;
+        border: 2px solid @border-gray;
+    }
+
+    /* soften labels */
+    .label {
+        background: transparent !important;
+        border: 1px solid @border-gray;
+    }
+    
+    /* decrease spacing */
+    .tab-header h2,
+    .standalone-assignment,
+    .evaluations-screen .evaluator-heading {
+        margin: 0;
+    }
+    .evaluations-screen .evaluator-heading {
+        padding: 0;
+    }
+    .assignment-screen .tab-content .tab-header {
+        padding-bottom: 0;
+    }
+    .assignment-screen .tab-content .content {
+        margin-bottom: 1em;
+    }
+    .assignment-screen .tab-content .each-evaluation {
+        padding-bottom: 1em;
+    }
+    
+    /* remove border */
+    .assignment-screen .tab-content .tab-header,
+    .assignment-screen .tab-content .each-answer,
+    .evaluations-screen .evaluations {
+        border-left: none;
+        border-right: none;
+    }
+
+    /* more blue to black */
+    .standalone-assignment,
+    fieldset,
+    .pagination > .active > a {
+        background: #fff;
+        border: 2px solid #000;
+    }
+        fieldset .instructional-text {
+            border-color: #000;
+        }
+    .assignment-screen .assignment-metadata-list,
+    .assignment-screen .assignment-metadata-list > li {
+        border-color: #000;
+    }
+
+    /* for Rich Content */
+    .rich-content-embed {
+        display: none;
+    }
+    .rich-content a {
+        text-decoration: underline;
+    }
+    .rich-content a[href]:after {
+        content: ' [see: ' attr(href) '] ';
+        font-size: 80%;
+        overflow-wrap: break-word;
+    }
+
+}//closes @media

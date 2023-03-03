@@ -1,0 +1,18 @@
+<h1>Results</h1>
+<p><a href="#/course/{{courseId}}/user">&laquo; Back to Manage Users?</a></p>
+<div ng-show="results.invalids && results.invalids.length">
+    <h2>Users not enrolled or created due to errors</h2>
+    <table class="table table-striped">
+        <tr>
+            <th ng-repeat="header in headers">{{header}}</th>
+        </tr>
+        <tr ng-repeat="invalid in results.invalids">
+            <td>{{invalid.user.username}}</td>
+            <td>{{invalid.user.student_number}}</td>
+            <td>{{invalid.user.firstname}}</td>
+            <td>{{invalid.user.lastname}}</td>
+            <td>{{invalid.user.email}}</td>
+            <td>{{invalid.message}}</td>
+        </tr>
+    </table>
+</div>

@@ -1,0 +1,56 @@
+
+
+/***** NAVIGATION & BREADCRUMBS  *****/
+
+/* outermost containing div for the navigation */
+.navbar {
+
+  margin-bottom: 0.5em;
+
+  /* left-hand logo */
+  .navbar-brand {
+    padding: 5px 15px 0 15px;
+  }
+
+}//cloases navbar
+
+/* ul for breadcrumbs */
+.breadcrumb-trail {
+
+  margin: 0 0 1em 1em;
+  padding: 0;
+  color: @breadcrumb-gray;
+
+  /* breadcrumbs */
+  li {
+    display: inline-block;
+    list-style: none;
+  }
+
+  /* class for the last li */
+  .last-crumb {
+    color: @breadcrumb-gray;
+  }
+
+}//closes breadcrumb-trail
+
+/* for impersonation visual cue */
+.impersonation_cue {
+    background-color: #f2dede;
+    color: #a94442;
+    position: fixed;
+    left: 0px;
+    bottom: 0px;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    z-index: 999;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* demo message for demo site */
+.demo-msg {
+  margin: 1em auto;
+  width: 60%;
+}

@@ -1,0 +1,444 @@
+
+
+/***** OVERALL *****/
+
+body {
+  margin-bottom: 1em;
+}
+
+.breadcrumb-trail {
+  font-size: 1.15em;
+}
+
+/* serif font for headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Clarendon Std', 'Century Old Style Std', 'Century Schoolbook', Georgia, serif;
+  font-weight: bold;
+}
+
+modal-cancel-button + h1 {
+  margin-top: 0;
+}
+
+.rich-content-attachments h5 {
+  margin-top: 15px;
+}
+
+/* code highlighting blocks shouldn't have boxes around them */
+pre {
+    background-color: transparent;
+    border: none;
+    padding: 0px;
+}
+
+/* fieldsets for forms look like blue box */
+fieldset {
+
+  margin: 2em 0;
+  padding: 1.5em;
+  background: @bkgrd-blue;
+  .border-radius();
+
+  h2 {
+    margin-top: .5em;
+  }
+
+  .instructional-text {
+    margin: .5em 0 2em 0;
+    padding: 1em;
+    color: #4AADC3;
+    font-size: 1.1em;
+    border: 2px dotted @green-blue;
+  }
+
+  hr {
+    margin: 2em 0 2.5em 0;
+    border-color: @green-blue;
+  }
+
+}//closes fieldset
+
+fieldset + fieldset {
+  margin-top: 0;
+}
+
+/* some fieldsets need table-cell display to contain oversized images */
+.table-cell {
+  display: table-cell
+}
+
+/* legends for forms look like blue buttons */
+legend {
+  padding: .3em .6em;
+  position: relative;
+  top:.5em;
+  color: #fff;
+  font-size: 1.2em;
+  width: auto;
+  background: @link-blue;
+}
+
+/* for adding a required star after labels */
+.required-star:after {
+  color: @required-red;
+  content: ' *';
+}
+
+/* for optional text after labels */
+.optional {
+  font-style: italic;
+  font-weight: normal;
+}
+
+/* checkbox inputs */
+input[type=checkbox] {
+  margin: 0 0.4em 0 0;
+}
+
+/* submit buttons */
+.btn[type=submit],
+.mirror-submit {
+  margin-bottom: 2em;
+
+  &.inline-submit {
+    margin: 0 1em;
+  }
+
+}
+
+/* increase emphasis for certain buttons */
+.btn-success,
+.btn-info {
+  font-weight: bold;
+}
+.btn-success {
+  border-color: #3b933b;
+}
+.btn-info {
+  border-color: #27a4c6;
+}
+
+/* labels to look less like buttons */
+.label {
+  border-radius: 1em;
+  font-weight: normal;
+}
+
+/* fix placement of bootstrap form feedback icons */
+.has-feedback .form-control-feedback {
+  top: 25px;
+  z-index: 200;
+}
+
+/* date fields don't get error icons */
+.has-feedback.is-date .form-control {
+  padding-right: 12px;
+}
+
+/* inputs above inline error messages */
+.has-feedback input {
+  position: relative;
+  z-index: 100;
+}
+
+/* inline error messages */
+.has-feedback .alert {
+  margin-top: -6px;
+  margin-left: 6px;
+  padding: 12px;
+  width: 90%;
+}
+
+/* lighten placeholder text */
+.form-control::placeholder {
+   color: #ccc;
+}
+
+/* dl used for examples on import screen */
+dt {
+  font-size: 1.1em;
+  font-style: italic;
+  font-weight: normal;
+}
+
+  dd {
+    margin-bottom: .5em;
+    padding-left: 2em;
+  }
+
+/* class for sub-navigation i.e. header action buttons */
+.sub-nav {
+  margin: 1.5em 0 2em 0;
+  text-align: right;
+
+  .btn {
+    margin: 0 0 1em .2em;
+  }
+
+}//closes sub-nav
+
+/* class for collapsible content */
+.collapsible-content {
+
+  margin: 1em 0;
+  padding-left: 1.5em;
+  border-left: 2px solid @border-gray;
+
+}//closes collapsible-content
+
+/* attachments similar styling to collapsible */
+.each-attachment-content {
+
+  &:extend(.collapsible-content);
+  border-left: 1px dashed @link-blue;
+
+  .btn {
+    margin: .5em .5em .5em 0;
+  }
+
+}//closes each-attachment-content
+
+/* additional responsize embed sizes */
+.embed-responsive-pdf {
+  padding-bottom: 100%
+}
+
+/* class for divs that contain multiple filters */
+.multi-filters {
+
+  margin-bottom: .5em;
+
+  /* wrapper */
+  > div {
+    margin-top: 1.6em;
+  }
+
+  /* each filter */
+  .filter {
+    margin: 0 0 .5em 0.8em;
+  }
+
+}//closes multi-filters
+
+/* class for filters */
+.filter {
+
+  display: inline-block;
+  margin: .4em 0;
+
+  label {
+    margin: 0;
+    font-size: 1.1em;
+  }
+
+  select {
+    margin: 0;
+    padding: .2em;
+    max-width: 20em;
+  }
+
+  .chosen-container {
+    max-width: 24em;
+    min-width: 12em;
+  }
+
+  &:last-child {
+
+    select {
+      margin-bottom: 0.5em;
+    }
+
+  }
+
+}//closes .filter
+
+
+.chosen-container {
+  text-align: left;
+}
+
+/* need additional styling to match regular error */
+.has-error .chosen-container.chosen-container-single a.chosen-single,
+.evaluate-screen .each-criterion .has-error.btn-group,
+.has-error .cke {
+  border-color: #a94442;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+}
+ 
+/* class for introductory text on each page (if used) */
+.intro-text {
+  margin: 1em 0 2em 0;
+  font-size: 1.2em;
+}
+  .intro-text.less-margin {
+    margin: 1em 0;
+  }
+
+/* class for divs surrounding assignments */
+.standalone-assignment {
+
+  margin: 2em 0 4em 0;
+  padding: 2em;
+  .blue-box();
+  
+  &.comment-form {
+    margin-bottom: 0;
+  }
+
+  /* assignment name */
+  h2 {
+    margin: 0 0 .5em 0;
+  }
+
+  /* assignment details */
+  .assignment-desc {
+    font-size: 1.1em;
+  }
+
+}//closes standalone-assignment
+
+/* class for assignment description divs (for non-standalone-assignments */
+.assignment-desc {
+  margin: 1.5em 0;
+  font-size: 1.1em;
+}
+
+/* need to constrain oversized images submitted by users */
+.assignment-desc img,
+.each-answer .content img,
+.answer-choice img {
+  max-width: 100%;
+}
+
+/* ul/ol class for spacing out some of the instrucitonal text */
+.li-spacing li {
+  margin-bottom: .25em;
+}
+
+/* class for not wrapping white space */
+.nowrap {
+  white-space: nowrap;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+/* styles for uploader divs */
+.attach-progress {
+  height: 1em;
+  background: @bkgrd-gray;
+}
+.attach-progressBar {
+  width: 0%;
+  height: 1em;
+  background: @link-blue;
+}
+
+/* angularstrap's modal */
+.modal-dialog {
+  margin-top: 8em;
+  width: 80%;
+}
+
+.modal-backdrop.am-fade {
+
+  opacity: .5;
+  transition: opacity .15s linear;
+
+  &.ng-enter {
+
+    opacity: 0;
+
+    &.ng-enter-active {
+      opacity: .5;
+    }
+
+  }//closes ng-enter
+
+  &.ng-leave {
+
+    opacity: .5;
+
+    &.ng-leave-active {
+      opacity: 0;
+    }
+
+  }//closes ng-leave
+
+}//closes am-fade
+
+/* for hiding sensitive info */
+.spoiler {
+    background-color: black;
+    color: black;
+}
+
+.spoiler:hover {
+    background-color: transparent;
+    color: inherit;
+}
+
+/* for highlighting items for a few seconds */
+.highlight-momentarily {
+    -webkit-animation: highlightframes 4s;
+    -moz-animation: highlightframes 4s;
+    -ms-animation: highlightframes 4s;
+    -o-animation: highlightframes 4s;
+    animation: highlightframes 4s;
+
+    /* Safari */
+    @-webkit-keyframes highlightframes {
+      0%   {}
+      30%  {background: #fff3cd;}
+      50%  {background: #fff3cd;}
+      100% {}
+    }
+
+    /* Mozilla */
+    @-moz-keyframes highlightframes {
+      0%   {}
+      30%  {background: #fff3cd;}
+      50%  {background: #fff3cd;}
+      100% {}
+    }
+
+    /* IE */
+    @-ms-keyframes highlightframes {
+      0%   {}
+      30%  {background: #fff3cd;}
+      50%  {background: #fff3cd;}
+      100% {}
+    }
+
+    /* Opera */
+    @-o-keyframes highlightframes {
+      0%   {}
+      30%  {background: #fff3cd;}
+      50%  {background: #fff3cd;}
+      100% {}
+    }
+
+    /* Standard syntax */
+    @keyframes highlightframes {
+      0%   {}
+      30%  {background: #fff3cd;}
+      50%  {background: #fff3cd;}
+      100% {}
+    }
+}
+
+/* for ie9 */
+.ie9 .search-courses:before {
+  content: 'Filter courses by keyword:';
+}
+
+.modal-content {
+  padding: 15px;
+}

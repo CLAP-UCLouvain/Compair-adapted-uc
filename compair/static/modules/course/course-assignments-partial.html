@@ -1,0 +1,130 @@
+<div class="course-screen">
+
+    <div class="row">
+        <header ng-class="{'col-sm-6 col-lg-7': canManageAssignment, 'col-sm-12': !canManageAssignment}">
+            <h1><i class="fa fa-book"></i> {{course.name}} ({{course.year}} {{course.term}})</h1>
+        </header>
+        <div ng-if="canManageAssignment" class="col-sm-6 col-lg-5 sub-nav">
+            <span ng-if="canCreateAssignment">
+                <a ng-href="#/course/{{course.id}}/assignment/create"
+                    class="btn btn-primary" id="add-assignment-btn">
+                    <i class="fa fa-plus"></i>
+                    Add Assignment
+                </a>
+            </span>
+            <span ng-if="canEditCourse">
+                <a id="manage-users-btn" ng-href="#/course/{{course.id}}/user" class="btn btn-primary">
+                    <i class="fa fa-users"></i>
+                    Manage Users
+                </a>
+            </span>
+            <span ng-if="canEditCourse">
+                <a id="edit-course-btn" ng-href="#/course/{{course.id}}/edit" class="btn btn-primary">
+                    <i class="fa fa-edit"></i>
+                    Edit Course
+                </a>
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12" ng-if="!canManageAssignment">
+            <p class="intro-text">Click the link below to begin assessing texts. You will be presented with pairs of anonymous texts to compare. Thanks again for your participation in CLAP!</p>
+        </div>
+        <div class="col-md-12" ng-if="canManageAssignment">
+            <p class="intro-text">For each assignment below, students will first submit their own answer. Then they will compare pairs of anonymous peer answers. Finally, they will read feedback received from peers. The anonymity of this feedback depends on what you instruct students to use as a display name in their profile, but you and your teaching team will always see who wrote what.</p>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-5 col-sm-6">
+            <h2 style="display:none;">{{filter}} <span ng-if="results.length != assignments.length">({{results.length}})</span></h2>
+        </div>
+
+        <div class="col-lg-7 col-sm-6 text-right">
+            <form style="display: none;" class="form-inline searchCourse" role="search" ng-show="assignments.length">
+                <div class="form-group filter" id="assignment-filter">
+                    <label>Show: &nbsp;</label>
+                    <select ng-model="filter" chosen ng-options="f for f in filters"></select>
+                </div>
+                <div class="form-group filter" id="assignment-sort" ng-hide="canMangeAssignments || sortOptions.length < 2">
+                    <label>Order by: &nbsp;</label>
+                    <select ng-model="sortOrder" chosen ng-options="s for s in sortOptions"></select>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <div ng-if="!assignments.length">
+        <hr />
+        <p>No assignments currently posted. <span ng-if="canCreateAssignment">Would you like to <a ng-href="#/course/{{course.id}}/assignment/create">add an assignment</a>?</span></p>
+    </div>
+
+    <!-- Assignments List -->
+    <div class="row each-assignment" ng-class="{'first-child': $first}"
+        ng-repeat="assignment in assignments | filter:assignmentFilter(filter) | orderBy:[assignmentSortOrder(sortOrder), '-created'] as results">
+
+        <!-- Assignment Display -->
+        <div class="col-sm-9 media">
+
+            <!-- Assignment Info -->
+            <div class="media-body">
+
+                <!-- Name -->
+                <a ng-href="#/course/{{courseId}}/assignment/{{assignment.id}}/compare">
+                    <h3 class="media-heading">
+                        <i class="fa fa-comments"></i>{{assignment.name}} &raquo;
+                    </h3>
+                </a>
+
+                <!-- Details -->
+                <!-- <div class="assignment-desc">
+                    <rich-content content="assignment.description" attachment="assignment.file"></rich-content>
+                </div> -->
+
+                <!-- Metadata -->
+                <ul class="list-inline assignment-metadata-list">
+                    <assignment-metadata name="editLink"></assignment-metadata>
+                    <assignment-metadata name="duplicateLink"></assignment-metadata>
+                    <assignment-metadata name="answerCount"></assignment-metadata>
+                    <assignment-metadata style="display: none;" name="answerCountEmpty"></assignment-metadata>
+                    <assignment-metadata name="compareCount"></assignment-metadata>
+                    <assignment-metadata name="feedbackCount"></assignment-metadata>
+                    <assignment-metadata style="display: none;" name="feedbackCountEmpty"></assignment-metadata>
+                    <assignment-metadata name="completedFeedback"></assignment-metadata>
+                    <assignment-metadata style="display: none;" name="missedFeedback"></assignment-metadata>
+                    <assignment-metadata style="display: none;" name="missingFeedback"></assignment-metadata>
+                    <assignment-metadata name="assignmentScheduled"></assignment-metadata>
+                    <assignment-metadata name="periodLabel"></assignment-metadata>
+                    <assignment-metadata name="assignmentCompleted"></assignment-metadata>
+                    <assignment-metadata name="deleteLink"></assignment-metadata>
+                </ul>
+
+            </div>
+
+        </div>
+
+        <!-- Assignment Actions -->
+        <div style="display: none;" class="col-sm-3 text-right action-btns">
+            <assignment-action-button name="answer"></assignment-action-button>
+            <assignment-action-button name="finishAnswer"></assignment-action-button>
+            <assignment-action-button name="compare"></assignment-action-button>
+            <assignment-action-button name="selfEval"></assignment-action-button>
+            <assignment-action-button name="viewResults"></assignment-action-button>
+            <assignment-text name="answerDue"></assignment-text>
+            <assignment-text name="notEnoughAnswers"></assignment-text>
+            <assignment-text name="comparisonsDue"></assignment-text>
+            <assignment-text name="selfEvalDue"></assignment-text>
+            <assignment-text name="noSelfEval"></assignment-text>
+        </div>
+
+    </div>
+
+    <div ng-show="assignments.length && !results.length">
+        <hr />
+        <p>No assignments currently listed in this category. Try another filter choice above.</p>
+    </div>
+
+</div>

@@ -1,0 +1,43 @@
+
+
+/***** HOME SCREEN *****/
+
+.home-screen {
+
+  .compair-logo {
+    margin-top: 1.7em;
+  }
+
+  .search-courses {
+    margin-top: 1.4em;
+
+    .dropdown-menu > li > a {
+      cursor: pointer;
+    }
+
+  }
+
+  /* div surrounding list of courses */
+  .course-list {
+
+    /* class for div surrounding each course */
+    .each-course {
+
+      .item-list();
+
+      .course-metadata-list {
+        .metadata();
+        margin-top: 2.5em;
+      }
+
+    }//closes each-course
+
+    /* add border to first course */
+    .first-child {
+      border-top: 1px solid @border-gray;
+    }
+
+  }//closes course-list
+
+}//closes home-screen
+
