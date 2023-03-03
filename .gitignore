@@ -55,7 +55,7 @@ compair/static/index.html
 
 .env
 .python-version
-
+html-update-script/.env
 # copied fonts
 compair/static/fonts
 
